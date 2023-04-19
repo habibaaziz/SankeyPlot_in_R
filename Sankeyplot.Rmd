@@ -1,0 +1,98 @@
+---
+title: "Task2-Sankey Plot"
+author: "Habiba Aziz"
+date: "2023-04-18"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+setwd("~/Desktop/Habiba/Assignment No 2")
+```
+
+```{r}
+library(data.table)
+library(ggplot2)
+library(ggalluvial)
+library(janitor)
+library(ggforce)
+library(alluvial)
+library(htmltools)
+library(stringr)
+```
+
+# Data Creation & preparation
+
+## create the data frame 
+```{r}
+Data <- fread('"Risk Factors for Stroke in Blacks"             1990    1995    2000    2005    2010
+                Obesity                                 0.001   0.013   0.043   0.077   0.115
+                Diabetes                            0.359   0.316   0.26    0.187   0.092
+                Smoking                                 0.171   0.156   0.142   0.128   0.116
+                Hypercholesterolemia                    0.161   0.104   0.045   0.001   0.001
+                Hypertension                            0.654   0.633   0.602   0.561   0.509', header = TRUE)
+
+```
+
+
+```{r}
+# create clean column names names:
+setnames(Data, janitor::make_clean_names(names(Data)))
+
+# convert the data frame to long format:
+Data.long <- melt(Data, id.vars = "risk_factors_for_stroke_in_blacks")
+
+# create a new variable id that will sort the risk factors 
+Data.long[order(-value, variable), id := factor(rowid(variable))]
+
+```
+
+
+# Sankey Plot Code
+
+
+```{r}
+# create the sankey plot
+p1 <- ggplot(data = Data.long,
+ aes(x = variable, y = value,
+     stratum = id,
+     alluvium = risk_factors_for_stroke_in_blacks,
+     fill = risk_factors_for_stroke_in_blacks,
+     colour = id, alpha = value, xend = value, # alpha 7 xend for opacity
+     label = round(value, 2))) +
+ geom_flow(stat = "alluvium", lode.guidance = "frontback",
+ color = "white", knot.pos = 0.3, size = 1) + #knot.pos is used for 
+  geom_stratum(color = "white", width = 0.7, lwd = 1) + #lwd is used to adjust the line width of the horizontal and vertical lines that make up the rectangles of the strata.
+  theme(panel.background = element_blank(), axis.text.y = element_blank())+
+  scale_x_discrete(position = "top", labels=(c("1990","1995","2000","2005","2010"))) +
+  scale_alpha(range = c(1, 1)) + # for opacity
+ guides(fill = FALSE) +
+ geom_text(position = position_stack(vjust = 0.5), colour = "white", size = 3, fontface = 2) +
+  theme(legend.position = "left", axis.title = element_blank(), axis.ticks = element_blank(), plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("#E3735E", "#E89149", "#73ad7c","#4B68B8", "#7EAACD")) +
+  guides(alpha="none") +   # Remove alpha values from the legend
+  annotate("text", x=0.1, y=1.2, label= str_wrap("Hypertension"), hjust=0, size=3) +
+  annotate("text", x=0.1, y=0.5, label= str_wrap("Diabetes"), hjust=0,  size=3) + 
+  annotate("text", x=0.1, y=0.3, label= str_wrap("Smoking"), hjust=0, size=3) +
+  annotate("text", x=0.1, y=0.1, label= str_wrap("Hypercholesterolemia"), hjust=0, size=3) +
+  annotate("text", x=0.1, y=0, label= str_wrap("Obesity"), hjust=0, size=3) +
+  ggtitle('Risk Factors for Stroke in Blacks')
+
+
+
+```
+
+```{r}
+#pdf("Finalfigure.pdf", width = 16, height = 12)
+#p1
+#dev.off()
+ggsave("Desktop/Habiba/Assignment No 2/p1.png", plot = p1, width = 12, height = 5, dpi = 300)
+
+```
+
+
+
+
+
+
