@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r}
-setwd("~/Desktop/Habiba/Assignment No 2")
+setwd("~/Your Directory")
 ```
 
 ```{r}
@@ -87,7 +87,7 @@ p1 <- ggplot(data = Data.long,
 #pdf("Finalfigure.pdf", width = 16, height = 12)
 #p1
 #dev.off()
-ggsave("Desktop/Habiba/Assignment No 2/p1.png", plot = p1, width = 12, height = 5, dpi = 300)
+ggsave("Yourdirectory/p1.png", plot = p1, width = 12, height = 5, dpi = 300)
 
 ```
 
