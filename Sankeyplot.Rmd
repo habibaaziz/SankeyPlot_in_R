@@ -84,9 +84,6 @@ p1 <- ggplot(data = Data.long,
 ```
 
 ```{r}
-#pdf("Finalfigure.pdf", width = 16, height = 12)
-#p1
-#dev.off()
 ggsave("Yourdirectory/p1.png", plot = p1, width = 12, height = 5, dpi = 300)
 
 ```
